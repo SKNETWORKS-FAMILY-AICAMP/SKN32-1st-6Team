@@ -101,19 +101,6 @@ with st.sidebar:
     xlsx_count = len(list(data_dir.glob("*.xlsx")))
     st.markdown(f"**데이터 파일**: {xlsx_count}개")
 
-    st.markdown("---")
-    st.markdown(
-        "<small>📦 필요 패키지<br>"
-        "• streamlit<br>"
-        "• pandas, openpyxl<br>"
-        "• plotly<br>"
-        "• selenium<br>"
-        "• beautifulsoup4<br>"
-        "• mysql-connector-python</small>",
-        unsafe_allow_html=True
-    )
-
-
 # =========================================================================
 # 페이지 라우팅 실행
 # =========================================================================
