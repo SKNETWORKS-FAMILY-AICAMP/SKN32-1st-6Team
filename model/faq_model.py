@@ -21,12 +21,12 @@ load_dotenv()
 def _get_db_config():
 
     return {
-        "host": os.getenv("MYSQL_HOST", "localhost"),
-        "port": int(os.getenv("MYSQL_PORT", 3306)),
-        "user": os.getenv("MYSQL_USER", "student"),
-        "password": os.getenv("MYSQL_PASSWORD", "student80"),
-        "database": os.getenv("MYSQL_DATABASE", "car_dashboard"),
-        "charset": os.getenv("MYSQL_CHARSET", "utf8mb4"),
+        "host": os.getenv("MYSQL_HOST"),
+        "port": int(os.getenv("MYSQL_PORT")),
+        "user": os.getenv("MYSQL_USER"),
+        "password": os.getenv("MYSQL_PASSWORD"),
+        "database": os.getenv("MYSQL_DATABASE"),
+        "charset": os.getenv("MYSQL_CHARSET"),
     }
 
 
