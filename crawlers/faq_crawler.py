@@ -16,9 +16,11 @@ def crawl_generic_faq(
     url=None,
     company_code=None,
     company_name=None,
-    progress_callback=None
+    progress_callback=None,
+    max_items=None
 ):
 
     return crawl_kia_faq(
-        progress_callback=progress_callback
+        progress_callback=progress_callback,
+        max_items=max_items
     )

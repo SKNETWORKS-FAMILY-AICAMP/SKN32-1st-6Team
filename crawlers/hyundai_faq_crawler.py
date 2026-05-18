@@ -15,9 +15,10 @@ import time
 from model.faq_model import FAQModel
 
 
-def run():
+def run(max_items=None):
 
     driver = None
+    limit_reached = False
 
     try:
 
@@ -269,6 +270,10 @@ def run():
                                 'answer': answer
                             })
 
+                            if max_items is not None and len(faq_data) >= max_items:
+                                limit_reached = True
+                                break
+
                         except Exception as e:
 
                             print("\nFAQ 수집 실패")
@@ -276,6 +281,9 @@ def run():
                             print(e)
 
                             continue
+
+                    if limit_reached:
+                        break
 
                     # =========================
                     # 다음 페이지 이동
@@ -307,6 +315,9 @@ def run():
                 print("\n탭 처리 실패")
                 print(type(e).__name__)
                 print(e)
+
+            if limit_reached:
+                break
 
         # =========================
         # CSV 저장

@@ -22,11 +22,12 @@ COMPANY_NAME = "기아자동차"
 FAQ_URL = "https://www.kia.com/kr/customer-service/center/faq"
 
 
-def crawl_kia_faq(progress_callback=None):
+def crawl_kia_faq(progress_callback=None, max_items=None):
 
     driver = None
 
     results = []
+    limit_reached = False
 
     try:
 
@@ -232,9 +233,16 @@ def crawl_kia_faq(progress_callback=None):
 
                             })
 
+                            if max_items is not None and len(results) >= max_items:
+                                limit_reached = True
+                                break
+
                         except Exception:
 
                             continue
+
+                    if limit_reached:
+                        break
 
                     # =========================
                     # 다음 페이지 이동
@@ -279,6 +287,9 @@ def crawl_kia_faq(progress_callback=None):
             except Exception:
 
                 continue
+
+            if limit_reached:
+                break
 
         # =========================
         # 중복 제거

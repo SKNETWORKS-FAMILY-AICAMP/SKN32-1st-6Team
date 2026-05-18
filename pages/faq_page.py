@@ -134,9 +134,18 @@ def _render_crawl_tab():
         )
 
     col1, col2 = st.columns(2)
+    max_items = st.slider(
+        "크롤링 최대 항목",
+        min_value=10,
+        max_value=500,
+        value=100,
+        step=10,
+        help="크롤링할 FAQ 최대 개수를 지정합니다."
+    )
+
     with col1:
         if st.button("🚀 크롤링 시작", disabled=st.session_state.crawl_running or not CRAWLER_AVAILABLE, type="primary"):
-            _start_crawl(selected)
+            _start_crawl(selected, max_items)
 
     with col2:
         if st.session_state.crawl_running:
@@ -152,7 +161,7 @@ def _render_crawl_tab():
         st.error("selenium, beautifulsoup4 패키지를 설치해야 크롤링이 가능합니다.")
 
 
-def _start_crawl(company):
+def _start_crawl(company, max_items):
     st.session_state.crawl_running = True
     st.session_state.crawl_log = [f"[{_now()}] 크롤링 시작: {company['company_name']}"]
     st.session_state.last_session_results = []
@@ -168,9 +177,9 @@ def _start_crawl(company):
 
     try:
         if company["company_code"] == "hyundai":
-            results = _crawl_hyundai(log, session_id)
+            results = _crawl_hyundai(log, session_id, max_items)
         else:
-            results = _crawl_generic(company, log)
+            results = _crawl_generic(company, log, max_items)
 
         st.session_state.last_session_results = results
         log(f"✅ 완료: {len(results)}개 수집")
@@ -210,7 +219,7 @@ def _start_crawl(company):
     st.rerun()
 
 
-def _crawl_hyundai(log, session_id):
+def _crawl_hyundai(log, session_id, max_items=None):
     """
     crawling/hyundai_faq_crawling.py run()을 호출합니다.
     run()은 DB에 직접 저장하고 CSV도 생성합니다.
@@ -221,7 +230,7 @@ def _crawl_hyundai(log, session_id):
 
     # 크롤러 임포트 및 실행
     from crawlers.hyundai_faq_crawler import run as hyundai_run
-    hyundai_run()   # DB 저장 + CSV 저장까지 내부에서 처리
+    hyundai_run(max_items=max_items)   # DB 저장 + CSV 저장까지 내부에서 처리
 
     log("run() 완료. 수집 결과를 불러오는 중...")
 
@@ -255,7 +264,7 @@ def _crawl_hyundai(log, session_id):
     return results
 
 
-def _crawl_generic(company, log):
+def _crawl_generic(company, log, max_items=None):
     """현대자동차 외 기업 — 범용 크롤러"""
     log(f"{company['company_name']} 범용 크롤러 실행 중...")
     from crawlers.faq_crawler import crawl_generic_faq
@@ -264,6 +273,7 @@ def _crawl_generic(company, log):
         company_code=company["company_code"],
         company_name=company["company_name"],
         progress_callback=log,
+        max_items=max_items,
     )
     return results
 
