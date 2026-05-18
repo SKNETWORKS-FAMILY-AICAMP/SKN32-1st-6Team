@@ -9,7 +9,7 @@ Streamlit 기반 데이터 조회 GUI 애플리케이션
 ---
 ## 👨‍💻 팀 소개 :  MULTITASKING
 
-| <img src="https://github.com/hyg10.png" width="120"> | <img src="https://github.com/changlike.png" width="120"> | <img src="https://github.com/cls15rn.png" width="120"> | <img src="https://github.com/wjdxor0405.png" width="120"> |
+| <img src="https://github.com/hyg10.png" width="120"> | <img src="https://github.com/cls15rn.png" width="120"> | <img src="https://github.com/changlike.png" width="120"> | <img src="https://github.com/wjdxor0405.png" width="120"> |
 |:---:|:---:|:---:|:---:|
 | 김남균 | 서유현 | 송채영 | 임정택 |
 | role | role | role | role |
