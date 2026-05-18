@@ -22,6 +22,10 @@ Streamlit 기반 데이터 조회 GUI 애플리케이션
 ---
 
 ## 설치 및 실행
+### 0. 가상환경 구성
+```bash
+python -m venv .venv
+```
 
 ### 1. 패키지 설치
 ```bash
