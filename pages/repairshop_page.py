@@ -64,9 +64,17 @@ def _si_for_db(si):
 
 
 def render():
-    st.header("🛠️ 현대/기아 정비소 조회")
+    # 1. 맨 상단 꽉 찬 배너 이미지 넣기
+    st.image("정비소배너.png", use_container_width=True)
+    
+    # 구분선 (선택사항)
+    st.markdown("---")
 
-    # DB + CSV 준비 (최초 1회, 백그라운드)
+    # 2. 타이틀 및 캡션 설정
+    st.header("🛠️ 정비소 조회")
+    st.caption("현대(블루핸즈) · 기아(오토큐)") # 생략되었던 캡션도 다시 넣어드렸어요!
+
+    # 3. DB + CSV 준비 (최초 1회, 백그라운드) -> 중복 제거 완료
     if not st.session_state.get("repair_loaded"):
         with st.spinner("데이터 준비 중..."):
             ok, err = prepare_data()
@@ -75,6 +83,7 @@ def render():
             st.error(err)
             return
 
+    # 4. 지역 목록 가져오기
     try:
         region_tree = get_region_lists()
     except Exception as e:
