@@ -31,7 +31,7 @@ pip install -r requirements.txt
 ```
 
 ### 2. MySQL 설정 (FAQ 누적 저장 시 필요)
-`.env`에서 DB_CONFIG 수정:
+`.env`파일을 추가하여 다음 내용을 입력:
 ```python
 # MySQL DB connection settings
 MYSQL_HOST=localhost
@@ -80,6 +80,8 @@ proto_proj1/
 │   └── schema.sql            #  FAQ 데이터 SQL문(현대 + 기아.)
 ├── model/
 │   └── faq_model.py          # 크롤링된 데이터를 utils/database.py에서 설정된 스키마로 저장
+│   └── 
 ```
 ---
+## Entity Relationship Diagram
 ![image](./diagram.png)
