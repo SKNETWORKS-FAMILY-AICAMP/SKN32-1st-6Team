@@ -64,7 +64,7 @@ def render():
     if not DB_AVAILABLE:
         st.warning(
             "⚠️ MySQL 연결 불가. FAQ 누적 저장 기능을 사용하려면 MySQL을 설정하세요.\n\n"
-            "`pip install mysql-connector-python` 후 utils/database.py에서 DB_CONFIG를 수정하세요.",
+            "`pip install mysql-connector-python` 후 .env 파일을 수정하세요.",
             icon="🗄️"
         )
     else:
