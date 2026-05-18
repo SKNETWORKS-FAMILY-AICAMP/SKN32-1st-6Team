@@ -1,25 +1,46 @@
 """
 MySQL 데이터베이스 연결 및 스키마 관리 모듈
 """
+import os
+from pathlib import Path
 import mysql.connector
 from mysql.connector import Error
 import streamlit as st
 from datetime import datetime
 
 
-DB_CONFIG = {
-    "host": "localhost",
-    "port": 3306,
-    "user": "student",
-    "password": "student80",
-    "database": "car_dashboard",
-    "charset": "utf8mb4",
-}
+def _load_env_file(path: Path):
+    if not path.exists():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        os.environ[key] = value
+
+
+def _get_db_config():
+    dotenv_path = Path(r"C:\SKN32-1st-6Team\.env")
+    _load_env_file(dotenv_path)
+
+    return {
+        "host": os.getenv("MYSQL_HOST", "localhost"),
+        "port": int(os.getenv("MYSQL_PORT", 3306)),
+        "user": os.getenv("MYSQL_USER", "student"),
+        "password": os.getenv("MYSQL_PASSWORD", "student80*"),
+        "database": os.getenv("MYSQL_DATABASE", "car_dashboard"),
+        "charset": os.getenv("MYSQL_CHARSET", "utf8mb4"),
+    }
 
 
 def get_connection():
     try:
-        conn = mysql.connector.connect(**DB_CONFIG)
+        conn = mysql.connector.connect(**_get_db_config())
         return conn
     except Error as e:
         raise ConnectionError(f"DB 연결 실패: {e}")
@@ -28,11 +49,12 @@ def get_connection():
 def init_database():
     """DB 및 테이블 초기화"""
     try:
-        cfg = {k: v for k, v in DB_CONFIG.items() if k != "database"}
+        db_config = _get_db_config()
+        cfg = {k: v for k, v in db_config.items() if k != "database"}
         conn = mysql.connector.connect(**cfg)
         cursor = conn.cursor()
-        cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DB_CONFIG['database']} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
-        conn.database = DB_CONFIG["database"]
+        cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_config['database']} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
+        conn.database = db_config["database"]
 
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS faq_companies (
@@ -209,8 +231,25 @@ def get_all_faq(company_code=None, search_keyword=None):
         kw = f"%{search_keyword}%"
         params.extend([kw, kw, kw])
     query += " ORDER BY f.crawled_at DESC"
-    cursor.execute(query, params)
-    result = cursor.fetchall()
+    try:
+        cursor.execute(query, params)
+        result = cursor.fetchall()
+    except Error as e:
+        cursor.close()
+        conn.close()
+        if getattr(e, "errno", None) == 1146:
+            # 테이블이 없을 경우 자동 초기화 후 재시도
+            if init_database():
+                conn = get_connection()
+                cursor = conn.cursor(dictionary=True)
+                cursor.execute(query, params)
+                result = cursor.fetchall()
+                cursor.close()
+                conn.close()
+                return result
+        raise RuntimeError(
+            f"get_all_faq SQL error: {e}\nquery={query}\nparams={params}"
+        )
     cursor.close()
     conn.close()
     return result

@@ -1,27 +1,47 @@
 # model/faq_model.py
 # hyundai_faq_crawling.py에서 사용하는 DB 모델
-# utils/database.py의 DB_CONFIG와 동일한 접속 정보를 공유합니다.
+# utils/database.py와 동일한 접속 정보를 공유합니다.
 
 import sys
+import os
 from pathlib import Path
 
 # 프로젝트 루트를 sys.path에 추가 (어디서 실행해도 동작)
-ROOT = Path(__file__).parent.parent
+ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import mysql.connector
 from mysql.connector import Error
 
-# utils/database.py의 설정과 동일하게 유지
-DB_CONFIG = {
-    "host": "localhost",
-    "port": 3306,
-    "user": "student",
-    "password": "student80",
-    "database": "car_dashboard",
-    "charset": "utf8mb4",
-}
+
+def _load_env_file(path: Path):
+    if not path.exists():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        os.environ[key] = value
+
+
+def _get_db_config():
+    dotenv_path = Path(r"C:\SKN32-1st-6Team\.env")
+    _load_env_file(dotenv_path)
+
+    return {
+        "host": os.getenv("MYSQL_HOST", "localhost"),
+        "port": int(os.getenv("MYSQL_PORT", 3306)),
+        "user": os.getenv("MYSQL_USER", "student"),
+        "password": os.getenv("MYSQL_PASSWORD", "student80"),
+        "database": os.getenv("MYSQL_DATABASE", "car_dashboard"),
+        "charset": os.getenv("MYSQL_CHARSET", "utf8mb4"),
+    }
 
 
 class FAQModel:
@@ -38,11 +58,11 @@ class FAQModel:
 
     def _connect(self):
         try:
-            self.conn = mysql.connector.connect(**DB_CONFIG)
+            self.conn = mysql.connector.connect(**_get_db_config())
             self.cursor = self.conn.cursor()
         except Error as e:
             raise ConnectionError(f"DB 연결 실패: {e}\n"
-                                  f"model/faq_model.py 의 DB_CONFIG를 확인하세요.")
+                                  f"model/faq_model.py의 .env 파일을 확인하세요.")
 
     def _create_table(self):
         """faq_items 테이블이 없으면 생성"""
