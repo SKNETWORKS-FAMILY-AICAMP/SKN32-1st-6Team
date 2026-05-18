@@ -68,8 +68,22 @@ def render():
             icon="🗄️"
         )
     else:
-        if st.button("🔄 DB 초기화", help="테이블이 없으면 생성합니다."):
-            init_database()
+        if st.button("🔄 DB 초기화", help="FAQ 데이터를 모두 삭제합니다."):
+
+            conn = get_connection()
+            cursor = conn.cursor()
+
+            # FAQ 데이터 삭제
+            cursor.execute("DELETE FROM faq_items")
+
+            # 세션 데이터 삭제
+            cursor.execute("DELETE FROM crawl_sessions")
+
+            conn.commit()
+
+            cursor.close()
+            conn.close()
+
             st.success("DB 초기화 완료")
 
     if not CRAWLER_AVAILABLE:
@@ -161,9 +175,28 @@ def _start_crawl(company):
         st.session_state.last_session_results = results
         log(f"✅ 완료: {len(results)}개 수집")
 
+        # if DB_AVAILABLE and session_id:
+        #     saved = save_faq_items(results, company["company_name"], session_id)
+        #     finish_session(session_id, saved)
+        #     log(f"💾 DB 저장: {saved}개")
+
         if DB_AVAILABLE and session_id:
-            saved = save_faq_items(results, company["company_code"], session_id)
+
+            # 현대자동차는 크롤러 내부에서 이미 저장
+            if company["company_code"] == "hyundai":
+
+                saved = len(results)
+
+            else:
+
+                saved = save_faq_items(
+                    results,
+                    company["company_name"],
+                    session_id
+                )
+
             finish_session(session_id, saved)
+
             log(f"💾 DB 저장: {saved}개")
 
     except Exception as e:
@@ -355,6 +388,35 @@ def _render_accumulated_tab():
     if df.empty:
         st.info("조회된 데이터가 없습니다.")
         return
+
+    # =========================
+    # 조회 개수 슬라이더
+    # =========================
+
+    view_limit = st.slider(
+        "조회 개수",
+        min_value=10,
+        max_value=500,
+        value=50,
+        step=10
+    )
+
+    # =========================
+    # 최신순 정렬
+    # =========================
+
+    if "crawled_at" in df.columns:
+
+        df = df.sort_values(
+            by="crawled_at",
+            ascending=False
+        )
+
+    # =========================
+    # 최종 결과 제한
+    # =========================
+
+    df = df.head(view_limit)
 
     # 표 표시
     display_cols = [c for c in ["company_code", "category", "question", "answer", "crawled_at"] if c in df.columns]
