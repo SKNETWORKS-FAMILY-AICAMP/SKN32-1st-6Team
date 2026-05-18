@@ -94,7 +94,7 @@ def render():
         )
 
     # 사이드 탭
-    tab1, tab2, tab3, tab4 = st.tabs(["🕷️ 크롤링 실행", "📌 최근 수집 결과", "🗄️ 누적 데이터 조회", "⚙️ 기업 관리"])
+    tab1, tab2, tab3 = st.tabs(["🕷️ 크롤링 실행", "📌 최근 수집 결과", "🗄️ 누적 데이터 조회"])
 
     with tab1:
         _render_crawl_tab()
@@ -105,8 +105,8 @@ def render():
     with tab3:
         _render_accumulated_tab()
 
-    with tab4:
-        _render_company_manage_tab()
+    # with tab4:
+    #     _render_company_manage_tab()
 
 
 def _render_crawl_tab():
