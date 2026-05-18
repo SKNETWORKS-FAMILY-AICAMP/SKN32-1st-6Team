@@ -220,7 +220,7 @@ def _crawl_hyundai(log, session_id):
     log("crawling/hyundai_faq_crawling.py → run()")
 
     # 크롤러 임포트 및 실행
-    from crawling.hyundai_faq_crawling import run as hyundai_run
+    from crawlers.hyundai_faq_crawler import run as hyundai_run
     hyundai_run()   # DB 저장 + CSV 저장까지 내부에서 처리
 
     log("run() 완료. 수집 결과를 불러오는 중...")
@@ -258,7 +258,7 @@ def _crawl_hyundai(log, session_id):
 def _crawl_generic(company, log):
     """현대자동차 외 기업 — 범용 크롤러"""
     log(f"{company['company_name']} 범용 크롤러 실행 중...")
-    from crawlers.kia_crawler import crawl_generic_faq
+    from crawlers.faq_crawler import crawl_generic_faq
     results = crawl_generic_faq(
         url=company["faq_url"],
         company_code=company["company_code"],
