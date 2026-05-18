@@ -8,35 +8,19 @@ from mysql.connector import Error
 import streamlit as st
 from datetime import datetime
 
-
-def _load_env_file(path: Path):
-    if not path.exists():
-        return
-    for line in path.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):
-            continue
-        if "=" not in line:
-            continue
-        key, value = line.split("=", 1)
-        key = key.strip()
-        value = value.strip().strip('"').strip("'")
-        os.environ[key] = value
-
+from dotenv import load_dotenv
+load_dotenv()
 
 def _get_db_config():
-    dotenv_path = Path(r"C:\SKN32-1st-6Team\.env")
-    _load_env_file(dotenv_path)
 
     return {
-        "host": os.getenv("MYSQL_HOST", "localhost"),
-        "port": int(os.getenv("MYSQL_PORT", 3306)),
-        "user": os.getenv("MYSQL_USER", "student"),
-        "password": os.getenv("MYSQL_PASSWORD", "student80*"),
-        "database": os.getenv("MYSQL_DATABASE", "car_dashboard"),
-        "charset": os.getenv("MYSQL_CHARSET", "utf8mb4"),
+        "host": os.getenv("MYSQL_HOST"),
+        "port": int(os.getenv("MYSQL_PORT")),
+        "user": os.getenv("MYSQL_USER"),
+        "password": os.getenv("MYSQL_PASSWORD"),
+        "database": os.getenv("MYSQL_DATABASE"),
+        "charset": os.getenv("MYSQL_CHARSET"),
     }
-
 
 def get_connection():
     try:

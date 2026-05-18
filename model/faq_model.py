@@ -14,25 +14,11 @@ if str(ROOT) not in sys.path:
 import mysql.connector
 from mysql.connector import Error
 
-
-def _load_env_file(path: Path):
-    if not path.exists():
-        return
-    for line in path.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):
-            continue
-        if "=" not in line:
-            continue
-        key, value = line.split("=", 1)
-        key = key.strip()
-        value = value.strip().strip('"').strip("'")
-        os.environ[key] = value
+from dotenv import load_dotenv
+load_dotenv()
 
 
 def _get_db_config():
-    dotenv_path = Path(r"C:\SKN32-1st-6Team\.env")
-    _load_env_file(dotenv_path)
 
     return {
         "host": os.getenv("MYSQL_HOST", "localhost"),
