@@ -51,18 +51,11 @@ def render():
         return
 
     # 파일 선택 (여러 파일 지원)
-    file_options = {d["filename"]: d for d in valid}
-    col1, col2 = st.columns([2, 1])
-    with col1:
-        selected_file = st.selectbox(
-            "📁 데이터 파일 선택",
-            list(file_options.keys()),
-            help="data/ 폴더에 파일을 추가하면 자동으로 목록에 나타납니다."
-        )
-    with col2:
-        st.metric("조회 기간", file_options[selected_file]["period"])
+    # 첫 번째 데이터 자동 선택
+    data = valid[0]
 
-    data = file_options[selected_file]
+    # 조회 기간 표시
+    st.metric("조회 기간", data["period"])
     df = data["df"]
     col_names = data["col_names"]
 
@@ -82,8 +75,8 @@ def render():
         _render_raw_data(df)
 
     # 파일 추가 가이드
-    with st.expander("📁 새 데이터 파일 추가 방법"):
-        _show_upload_guide()
+    # with st.expander("📁 새 데이터 파일 추가 방법"):
+    #     _show_upload_guide()
 
 
 def _render_region_summary(df, col_names):
