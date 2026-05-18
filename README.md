@@ -2,9 +2,72 @@
 
 Streamlit 기반 데이터 조회 GUI 애플리케이션
 
----
+# 🚗 자동차 데이터 통합 대시보드
 
-## 주요 기능
+자동차 등록 현황, 기업 FAQ, 정비소 정보를 통합 조회 및 분석할 수 있는 Streamlit 기반 데이터 조회 GUI 애플리케이션
+
+---
+## 👨‍💻 팀 소개 :  MULTITASKING
+
+| <img src="https://github.com/hyg10.png" width="120"> | <img src="https://github.com/changlike.png" width="120"> | <img src="https://github.com/cls15rn.png" width="120"> | <img src="https://github.com/wjdxor0405.png" width="120"> |
+|:---:|:---:|:---:|:---:|
+| 김남균 | 서유현 | 송채영 | 임정택 |
+| role | role | role | role |
+| [GitHub](https://github.com/hyg10) | [GitHub](https://github.com/cls15rn) | [GitHub](https://github.com/changlike) | [GitHub](https://github.com/wjdxor0405) |
+
+## ⚒️ Tech Stack
+
+### Language & Framework
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
+
+### Data Processing
+![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
+![OpenPyXL](https://img.shields.io/badge/OpenPyXL-217346?style=for-the-badge&logo=microsoftexcel&logoColor=white)
+
+### Crawling
+![Selenium](https://img.shields.io/badge/Selenium-43B02A?style=for-the-badge&logo=selenium&logoColor=white)
+![BeautifulSoup](https://img.shields.io/badge/BeautifulSoup-8B4513?style=for-the-badge)
+
+### Database
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?style=for-the-badge&logo=sqlalchemy&logoColor=white)
+
+### Visualization
+![Plotly](https://img.shields.io/badge/Plotly-3F4F75?style=for-the-badge&logo=plotly&logoColor=white)
+
+### Tools
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
+![VSCode](https://img.shields.io/badge/VSCode-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white)
+
+## 📌 프로젝트 소개
+
+공공데이터와 기업 FAQ 데이터를 통합하여 자동차 등록 현황, 기업 FAQ, 정비소 정보를 조회할 수 있는 Streamlit 기반 데이터 대시보드입니다.
+
+사용자는 지역 기반 필터링과 데이터 시각화를 통해 자동차 관련 정보를 직관적으로 탐색할 수 있습니다.
+
+## 🧩 개발 배경
+
+자동차 관련 데이터는 공공데이터 포털, 기업 홈페이지, 정비소 정보 등 여러 플랫폼에 분산되어 있어 통합 조회와 비교 분석이 어렵다는 점에서 시작되었습니다.
+
+사용자는 원하는 정보를 얻기 위해 여러 사이트를 각각 방문해야 했고, 데이터 형식 또한 통일되어 있지 않아 효율적인 탐색과 활용에 불편함이 있었습니다.
+
+본 프로젝트는:
+- 공공데이터 자동 파싱
+- FAQ 크롤링 자동화
+- 지역 기반 검색 시스템
+- 시각화 대시보드
+  
+를 하나의 GUI 환경으로 통합하여 사용자 편의성과 데이터 접근성을 높이고자 개발했습니다.
+
+## 🎯 프로젝트 목표
+
+- 자동차 관련 데이터를 하나의 서비스로 통합
+- 비개발자도 쉽게 사용할 수 있는 GUI 제공
+- 크롤링 데이터 자동 수집 및 저장
+- 지역 기반 검색 및 시각화 기능 구현
+
+## 🔎주요 기능
 
 ### 1. 전국 자동차 등록 현황
 - KOSIS 자동차등록대수현황 xlsx 자동 파싱
@@ -17,7 +80,11 @@ Streamlit 기반 데이터 조회 GUI 애플리케이션
 - MySQL 누적 저장 및 조회
 - 크롤링 세션별 결과 vs 전체 누적 데이터 구분
 
----
+### 3. 현대 / 기아 정비소 조회
+- 전국자동차정비업체표준데이터 csv 파일 자동 적재
+- 현대자동차(블루핸즈) / 기아자동차(오토큐)필터링
+- 도 -> 시/군 -> 구 지역 계층별 조회
+- 검색어 기반 사용자 지정 서칭 가능  
 
 ## 설치 및 실행
 ### 0. 가상환경 구성
