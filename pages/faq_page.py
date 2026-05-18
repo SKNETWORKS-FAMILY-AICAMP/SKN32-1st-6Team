@@ -58,6 +58,7 @@ def _init_state():
 
 def render():
     _init_state()
+    st.image("기업FAQ.png", use_container_width=True)
     st.header("🔍 기업 FAQ 조회")
 
     # DB 상태 배너
