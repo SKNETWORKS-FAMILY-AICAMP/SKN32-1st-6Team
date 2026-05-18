@@ -127,34 +127,19 @@ def render():
         display_si = "전체"
 
     # 2. 동적 안내 문구 생성
-    status_text = f"**{do}** **{display_si}** **{gu}**에 위치한 **{brand}** 정비소 조회 결과"
-    st.markdown(status_text)  # 목록/차트 탭 바로 위에 문구 표시
+    status_text = f"{do} {display_si} {gu}에 위치한 {brand} 정비소 조회 결과"
+    st.subheader(status_text) # 목록 탭 바로 위에 문구 표시
 
     # 3. 기존 총 정비소 개수 메트릭 표시
     st.metric("총 정비소 개수", f"{len(df):,}곳")
 
-    tab_list, tab_chart = st.tabs(["목록", "차트"])
+    # '목록' 탭 딱 하나만 만들고, 그 탭 객체를 tab1 변수에 바로 쏙 담습니다.
+    tab1 = st.tabs(["목록"])[0]
 
-
-    with tab_list:
+    with tab1:
         if df.empty:
             st.info("검색 결과가 없습니다.")
         else:
             cols = [c for c in DISPLAY_COLUMNS if c in df.columns]
             show = df
             st.dataframe(show[cols], use_container_width=True, hide_index=True)
-
-    with tab_chart:
-        if df.empty:
-            st.info("차트 데이터 없음")
-        else:
-            col = "구" if gu != "전체" else "시도"
-            chart = (
-                df[df[col].astype(str).str.strip() != ""]
-                .groupby(col)
-                .size()
-                .reset_index(name="정비소 수")
-                .sort_values("정비소 수")
-            )
-            fig = px.bar(chart, x="정비소 수", y=col, orientation="h", title=f"{col}별 정비소 수")
-            st.plotly_chart(fig, use_container_width=True)
