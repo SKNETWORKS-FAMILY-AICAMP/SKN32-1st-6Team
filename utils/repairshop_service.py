@@ -8,10 +8,20 @@ from urllib.parse import quote_plus
 import pandas as pd
 from sqlalchemy import create_engine, text
 
+from dotenv import load_dotenv
+load_dotenv()
+import os
 # ==========================================
 # 1. CONFIG 설정 (기존 repairshop_config.py)
 # ==========================================
-DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME = "student", "student80", "localhost", "3306", "repairshopdb"
+
+
+DB_USER = os.getenv("MYSQL_USER")
+DB_PASSWORD = os.getenv("MYSQL_PASSWORD")
+DB_HOST = os.getenv("MYSQL_HOST")
+DB_PORT = int(os.getenv("MYSQL_PORT"))
+DB_NAME = os.getenv("MYSQL_DATABASE")
+
 ROOT = Path(__file__).parent.parent
 CSV_PATH = ROOT / "data" / "전국자동차정비업체표준데이터.csv"
 VERSION_FILE = ROOT / ".repairshop_data_version"

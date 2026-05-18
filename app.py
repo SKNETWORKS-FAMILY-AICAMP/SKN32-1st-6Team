@@ -63,7 +63,7 @@ with st.sidebar:
 
     page = st.radio(
         "메뉴",
-        ["🚗 전국 자동차 등록 현황", "🔍 기업 FAQ 조회", "🛠️ 정비소 조회"],
+        ["🚗 전국 자동차 등록 현황", "🔍 기업 FAQ 조회", "🛠️ 현대/기아 정비소 조회"],
         label_visibility="collapsed",
     )
 
