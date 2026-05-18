@@ -27,6 +27,7 @@ COLORS = {
 
 
 def render():
+    st.image("전국차량.png", use_container_width=True)
     st.header("🚗 전국 자동차 등록 현황")
 
     # 파일 목록 로드
