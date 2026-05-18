@@ -497,7 +497,6 @@ def _get_companies_list():
     base = [
         {"company_code": "kia", "company_name": "기아자동차", "faq_url": "https://www.kia.com/kr/customer-service/center/faq"},
         {"company_code": "hyundai", "company_name": "현대자동차", "faq_url": "https://www.hyundai.com/kr/ko/e/customer/center/faq"},
-        {"company_code": "genesis", "company_name": "제네시스", "faq_url": "https://www.genesis.com/kr/ko/support/faq.html"},
     ]
     extra = st.session_state.get("temp_companies", [])
     return base + extra

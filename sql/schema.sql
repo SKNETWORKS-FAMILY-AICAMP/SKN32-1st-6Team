@@ -46,5 +46,4 @@ CREATE TABLE IF NOT EXISTS crawl_sessions (
 -- 기본 기업 데이터 삽입
 INSERT IGNORE INTO faq_companies (company_code, company_name, faq_url) VALUES
     ('hyundai', '현대자동차', 'https://www.hyundai.com/kr/ko/e/customer/center/faq'),
-    ('kia',     '기아자동차', 'https://www.kia.com/kr/customer-service/center/faq'),
-    ('genesis', '제네시스',   'https://www.genesis.com/kr/ko/support/faq.html');
+    ('kia',     '기아자동차', 'https://www.kia.com/kr/customer-service/center/faq');
