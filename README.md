@@ -148,4 +148,4 @@ proto_proj1/
 ```
 ---
 ## 📊 Entity Relationship Diagram
-![image](./diagram.png)
+![image](./Diagram.png)
