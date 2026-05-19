@@ -1,8 +1,4 @@
-# 1.🚗 자동차 등록 & 기업 FAQ 대시보드
-
-Streamlit 기반 데이터 조회 GUI 애플리케이션
-[웹페이지 최종 NAME 뭐가 더 나은가요..?]
-# 2.🚗 자동차 데이터 통합 대시보드
+# 🚗 자동차 데이터 통합 대시보드
 
 자동차 등록 현황, 기업 FAQ, 정비소 정보를 통합 조회 및 분석할 수 있는 Streamlit 기반 데이터 조회 GUI 애플리케이션 
 
@@ -12,7 +8,6 @@ Streamlit 기반 데이터 조회 GUI 애플리케이션
 | <img src="https://github.com/hyg10.png" width="120"> | <img src="https://github.com/cls15rn.png" width="120"> | <img src="https://github.com/changlike.png" width="120"> | <img src="https://github.com/wjdxor0405.png" width="120"> |
 |:---:|:---:|:---:|:---:|
 | 김남균 | 서유현 | 송채영 | 임정택 |
-| role | role | role | role |
 | [GitHub](https://github.com/hyg10) | [GitHub](https://github.com/cls15rn) | [GitHub](https://github.com/changlike) | [GitHub](https://github.com/wjdxor0405) |
 
 ## ⚒️ Tech Stack
@@ -153,13 +148,4 @@ proto_proj1/
 ```
 ---
 ## 📊 Entity Relationship Diagram
-![image](./diagram.png)
-
-## 💬 프로젝트 회고
-
-| 이름 | 회고 |
-|---|---|
-| 김남균 | |
-| 서유현 |  |
-| 송채영 |  |
-| 임정택 |  |
+![image](./Diagram.png)
