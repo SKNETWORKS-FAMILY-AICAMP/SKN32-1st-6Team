@@ -3,7 +3,7 @@ CREATE DATABASE IF NOT EXISTS repairshopdb
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
-USE repairshopdb;
+USE car_dashboard;
 
 DROP TABLE IF EXISTS repairshop;
 
