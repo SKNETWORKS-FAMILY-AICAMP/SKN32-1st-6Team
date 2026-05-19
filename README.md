@@ -8,7 +8,7 @@
 | <img src="https://github.com/hyg10.png" width="120"> | <img src="https://github.com/cls15rn.png" width="120"> | <img src="https://github.com/changlike.png" width="120"> | <img src="https://github.com/wjdxor0405.png" width="120"> |
 |:---:|:---:|:---:|:---:|
 | 김남균 | 서유현 | 송채영 | 임정택 |
-| [GitHub](https://github.com/hyg10) | [GitHub](https://github.com/cls15rn) | [GitHub](https://github.com/changlike) | [GitHub](https://github.com/wjdxor0405) |
+|<a href="https://github.com/hyg10"><img src="https://img.shields.io/badge/hyg10-181717?style=for-the-badge&logo=github&logoColor=white"></a>|<a href="https://github.com/cls15rn"><img src="https://img.shields.io/badge/cls15rn-181717?style=for-the-badge&logo=github&logoColor=white"></a>|<a href="https://github.com/changlike"><img src="https://img.shields.io/badge/changlike-181717?style=for-the-badge&logo=github&logoColor=white"></a>|<a href="https://github.com/wjdxor0405"><img src="https://img.shields.io/badge/wjdxor0405-181717?style=for-the-badge&logo=github&logoColor=white"></a>|
 
 ## ⚒️ Tech Stack
 
@@ -146,6 +146,13 @@ proto_proj1/
 │   └── faq_model.py          # 크롤링된 데이터를 utils/database.py에서 설정된 스키마로 저장
 │   └── 
 ```
----
 ## 📊 Entity Relationship Diagram
 ![image](./Diagram.png)
+
+## 💬 프로젝트 회고
+| 팀원 | 회고 |
+| :---: | :--- |
+| 김남균 | |
+| 서유현 | |
+| 송채영 | |
+| 임정택 | |
