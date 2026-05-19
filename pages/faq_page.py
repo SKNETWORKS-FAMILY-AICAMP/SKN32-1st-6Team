@@ -360,16 +360,35 @@ def _render_accumulated_tab():
     company_code = company_options[selected_company_label]
 
     # 현대자동차는 크롤러가 company_code='현대자동차'로 저장하므로 두 값 모두 조회
-    hyundai_aliases = ["hyundai", "현대자동차"]
-    if company_code == "hyundai":
+    rows = None
+
+    alias_map = {
+        "hyundai": ["hyundai", "현대자동차"],
+        "kia": ["kia", "기아자동차"],
+    }
+
+    if company_code in alias_map:
+
         rows_all = []
-        for alias in hyundai_aliases:
-            rows_all += (get_all_faq(alias, search_kw or None) or [])
-        # 중복 제거 (id 기준)
+
+        for alias in alias_map[company_code]:
+
+            rows_all += (
+                get_all_faq(alias, search_kw or None) or []
+            )
+
+        # 중복 제거
         seen = set()
-        rows = [r for r in rows_all if r["id"] not in seen and not seen.add(r["id"])]
-    else:
-        rows = None  # 아래에서 분기 처리
+
+        rows = []
+
+        for r in rows_all:
+
+            if r["id"] not in seen:
+
+                seen.add(r["id"])
+
+                rows.append(r)
 
     if view_mode == "세션별 조회":
         sessions = get_sessions(company_code)
@@ -391,10 +410,43 @@ def _render_accumulated_tab():
         df = pd.DataFrame(rows) if rows else pd.DataFrame()
 
         # 통계
-        stats = get_faq_stats(company_code)
+        if company_code == "hyundai":
+
+            total_count = len(
+                get_all_faq("hyundai") +
+                get_all_faq("현대자동차")
+            )
+
+        elif company_code == "kia":
+
+            total_count = len(
+                get_all_faq("kia") +
+                get_all_faq("기아자동차")
+            )
+
+        else:
+
+            stats = get_faq_stats(company_code)
+
+            total_count = stats["total"] if stats else 0
         k1, k2 = st.columns(2)
-        k1.metric("누적 FAQ 수", f"{stats['total']:,}개" if stats["total"] else "0개")
-        k2.metric("최근 수집", str(stats["last_crawled"])[:16] if stats["last_crawled"] else "-")
+        k1.metric(
+            "누적 FAQ 수",
+            f"{total_count:,}개"
+        )
+
+        if rows and len(rows) > 0:
+
+            latest_time = rows[0].get("crawled_at", "-")
+
+        else:
+
+            latest_time = "-"
+
+        k2.metric(
+            "최근 수집",
+            str(latest_time)[:16]
+        )
 
     if df.empty:
         st.info("조회된 데이터가 없습니다.")
