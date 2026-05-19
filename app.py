@@ -11,7 +11,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent))
 
 st.set_page_config(
-    page_title="자동차 등록 & FAQ 대시보드",
+    page_title="자동차 데이터 통합 대시보드",
     page_icon="🚗",
     layout="wide",
     initial_sidebar_state="expanded",
