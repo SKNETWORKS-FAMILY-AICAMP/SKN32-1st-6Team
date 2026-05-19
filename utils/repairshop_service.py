@@ -36,47 +36,28 @@ KIA_IN_NAME = ["기아", "오토큐"]
 DATA_VERSION = 4  # 주소 정제 규칙이 바뀌었으므로 버전을 올려서 다시 저장되도록 유도
 
 # 화면이나 표에 보여줄 항목 이름들
-TABLE_COLUMNS = ["자동차정비업체명", "브랜드", "시도", "시", "구", "소재지도로명주소", "자동차정비업체종류"]
+TABLE_COLUMNS = ["자동차정비업체명", "브랜드", "시도", "시군구", "소재지도로명주소", "자동차정비업체종류"]
 DISPLAY_COLUMNS = TABLE_COLUMNS.copy()
 
 # ==========================================
 # 2. 도로명 주소 잘라내기 규칙
 # ==========================================
 def parse_address(address):
-    """긴 주소 문장을 받아서 (시·도 / 시·군 / 구) 3단계로 쪼개주는 기능"""
     text = str(address).strip()
     if not text or text.lower() in ("nan", "none"):
-        return "", "", ""
-    
+        return "", ""
+
     words = text.split()
     if not words:
-        return "", "", ""
-    
-    # 첫 번째 단어는 무조건 '서울시', '경기도' 같은 시·도 단위로 지정
-    do = words[0]
-    si, gu = "", ""
-    
-    # 두 번째 단어부터 돌면서 '시', '군', '구'로 끝나는 단어를 찾아 분류
-    i = 1
-    while i < len(words):
-        w = words[i]
-        if w.endswith("구"):
-            gu = w
-            break
-        if (w.endswith("시") or w.endswith("군")) and not si:
-            si = w
-            i += 1
-            continue
-        break
-        
-    if do and not si and not gu and i < len(words) and words[i].endswith("구"):
-        gu = words[i]
-        
-    return do, si, gu
+        return "", ""
 
-def si_display_name(si):
-    """시·군 항목이 없으면 빈칸으로 두고, 있으면 그대로 보여주는 기능"""
-    return "" if not str(si).strip() else str(si)
+    # 시도
+    sido = words[0]
+
+    # 나머지 전부 시군구 통합 (서울/세종 포함 안정 처리)
+    sigungu = " ".join(words[1:]).strip()
+
+    return sido, sigungu
 
 # ==========================================
 # 3. 데이터베이스(DB) 연결 및 검색 기능
@@ -106,13 +87,12 @@ def test_connection():
 
 def create_db_and_table():
     """저장 공간(데이터베이스와 표)이 없을 때 새로 만들어주는 기능"""
-    sql_create_table = f"""
+    sql_create_table = """
     CREATE TABLE IF NOT EXISTS repairshop (
         자동차정비업체명 VARCHAR(150) NOT NULL,
         브랜드 VARCHAR(50),
         시도 VARCHAR(50),
-        시 VARCHAR(50),
-        구 VARCHAR(50),
+        시군구 VARCHAR(255),
         소재지도로명주소 VARCHAR(255),
         자동차정비업체종류 INT
     ) CHARACTER SET utf8mb4;
@@ -121,59 +101,57 @@ def create_db_and_table():
         engine = _get_engine(use_db=False)
         with engine.begin() as conn:
             conn.execute(text(f"CREATE DATABASE IF NOT EXISTS {DB_NAME} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"))
-            conn.execute(text(f"USE {DB_NAME}"))
-            conn.execute(text("DROP TABLE IF EXISTS repairshop"))
-            conn.execute(text(sql_create_table))
         return True, "DB·테이블 생성 완료"
     except Exception as e:
         return False, str(e)
 
-def search_shops(brand=None, do=None, si=None, gu=None, keyword=None):
-    """사용자가 고른 브랜드, 지역, 검색어를 바탕으로 정비소를 찾아주는 기능"""
+def search_shops(brand=None, do=None, sigungu=None, keyword=None):
+
     where = f"`브랜드` IN ({','.join(repr(b) for b in BRANDS)})"
-    
-    # 주소가 제대로 입력 안 된 정상적이지 않은 데이터는 검색 대상에서 제외
-    where_clauses = [where, "`시도` != ''", "`시도` IS NOT NULL"]
+    clauses = [where, "`시도` != ''"]
     params = {}
 
     if brand:
-        where_clauses.append("`브랜드` = :brand"); params["brand"] = brand
+        clauses.append("브랜드 = :brand")
+        params["brand"] = brand
+
     if do:
-        where_clauses.append("`시도` = :do"); params["do"] = do
-    if si:
-        where_clauses.append("`시` = :si"); params["si"] = si
-    if gu:
-        where_clauses.append("`구` = :gu"); params["gu"] = gu
+        clauses.append("시도 = :do")
+        params["do"] = do
+
+    if sigungu:
+        clauses.append("시군구 LIKE :sigungu")
+        params["sigungu"] = f"%{sigungu}%"
+
     if keyword:
-        where_clauses.append("(`자동차정비업체명` LIKE :kw OR `소재지도로명주소` LIKE :kw)")
+        clauses.append("(자동차정비업체명 LIKE :kw OR 소재지도로명주소 LIKE :kw)")
         params["kw"] = f"%{keyword}%"
 
-    sql = f"SELECT * FROM repairshop WHERE {' AND '.join(where_clauses)}"
+    sql = f"SELECT * FROM repairshop WHERE {' AND '.join(clauses)}"
     return pd.read_sql(text(sql), _get_engine(), params=params)
 
 def get_region_lists():
-    """웹 화면의 필터(선택 박스)에 띄워줄 '시도 > 시군 > 구' 목록을 계층 구조로 만드는 기능"""
-    # 데이터베이스에서 '시도'와 '시' 항목이 둘 다 명확하게 채워진 깨끗한 데이터만 골라옴
+
     sql = f"""
-        SELECT DISTINCT `시도`, `시`, `구` 
-        FROM repairshop 
-        WHERE `브랜드` IN ({','.join(repr(b) for b in BRANDS)})
-          AND `시도` IS NOT NULL AND `시도` != ''
-          AND `시` IS NOT NULL AND `시` != ''
-        ORDER BY `시도`, `시`, `구`
+        SELECT DISTINCT 시도, 시군구
+        FROM repairshop
+        WHERE 브랜드 IN ({','.join(repr(b) for b in BRANDS)})
+          AND 시도 IS NOT NULL AND 시도 != ''
+        ORDER BY 시도, 시군구
     """
+
     df = pd.read_sql(text(sql), _get_engine())
+
     tree = {}
+
     for _, row in df.iterrows():
-        do = str(row["시도"]).strip()
-        si = str(row["시"]).strip()
-        gu = str(row["구"] or "").strip()
-        
-        # 주소에 구멍(빈 곳)이 없는 데이터만 골라 트리 구조(도 안의 시, 시 안의 구)로 조립
-        if do and si:
-            tree.setdefault(do, {}).setdefault(si, set())
-            if gu:
-                tree[do][si].add(gu)
+        do = row["시도"].strip()
+        sg = (row["시군구"] or "").strip()
+
+        tree.setdefault(do, set())
+        if sg:
+            tree[do].add(sg)
+
     return tree
 
 # ==========================================
@@ -189,43 +167,50 @@ def _pick_brand(shop_name):
     return ""
 
 def run_etl():
-    """엑셀(CSV) 원본 파일을 열어서 정제한 뒤 데이터베이스에 집어넣는 핵심 기능"""
+
     raw_df = None
-    # 한글 깨짐을 방지하기 위해 여러 인코딩 방식으로 파일 읽기 시도
+
     for enc in ("utf-8", "cp949", "euc-kr"):
         try:
             raw_df = pd.read_csv(CSV_PATH, encoding=enc, low_memory=False)
             break
-        except Exception:
+        except:
             continue
-    if raw_df is None:
-        raise FileNotFoundError(f"CSV 파일을 찾을 수 없거나 읽을 수 없습니다: {CSV_PATH}")
 
-    # 현대/기아 관련 정비소만 필터링하여 남기기
-    df = raw_df[raw_df["자동차정비업체명"].astype(str).str.contains(SHOP_NAME_FILTER, case=False, na=False)].copy()
+    if raw_df is None:
+        raise FileNotFoundError("CSV 로드 실패")
+
+    df = raw_df[
+        raw_df["자동차정비업체명"]
+        .astype(str)
+        .str.contains(SHOP_NAME_FILTER, case=False, na=False)
+    ].copy()
+
     df["브랜드"] = df["자동차정비업체명"].apply(_pick_brand)
     df = df[df["브랜드"].isin(BRANDS)]
 
-    # 위에서 만든 주소 잘라내기 기능을 이용해 주소를 쪼개서 새 칸에 입력
+    # 주소 파싱 (핵심 변경)
     regions = df["소재지도로명주소"].astype(str).apply(parse_address)
     df["시도"] = regions.apply(lambda x: x[0])
-    df["시"] = regions.apply(lambda x: x[1])
-    df["구"] = regions.apply(lambda x: x[2])
+    df["시군구"] = regions.apply(lambda x: x[1])
 
-    # [요청 반영] 주소에 '시도'와 '시' 항목이 비어 있거나 누락된 행은 아예 버리기 (필터에 안 나오게 처리)
-    df = df[(df["시도"] != "") & (df["시도"].notna())]
-    df = df[(df["시"] != "") & (df["시"].notna())]
+    # ❗ 핵심: 서울 안 날아가게 최소 조건만 유지
+    df = df[df["시도"].notna() & (df["시도"] != "")]
+    df = df.dropna(subset=["시도"])
 
-    # 혹시 누락된 데이터 칸이 있다면 빈 문자열로 채워주기
     for col in TABLE_COLUMNS:
         if col not in df.columns:
             df[col] = ""
 
-    # 중복 데이터 제거
     cleaned_df = df[TABLE_COLUMNS].drop_duplicates()
-    
-    # 최종 정리된 데이터를 데이터베이스 테이블에 덮어쓰기 형태로 저장
-    cleaned_df.to_sql("repairshop", _get_engine(), if_exists="replace", index=False)
+
+    cleaned_df.to_sql(
+        "repairshop",
+        _get_engine(),
+        if_exists="replace",
+        index=False
+    )
+
     return len(cleaned_df)
 
 def prepare_data():

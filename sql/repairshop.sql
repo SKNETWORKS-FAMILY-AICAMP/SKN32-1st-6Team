@@ -11,8 +11,7 @@ CREATE TABLE repairshop (
     자동차정비업체명      VARCHAR(150) NOT NULL,
     브랜드                VARCHAR(50),
     시도                  VARCHAR(50),
-    시                    VARCHAR(50),
-    구                    VARCHAR(50),
+    시군구                VARCHAR(255),
     소재지도로명주소      VARCHAR(255),
     자동차정비업체종류    INT
 ) CHARACTER SET utf8mb4;
