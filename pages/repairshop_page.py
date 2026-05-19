@@ -56,7 +56,7 @@ def _gu_choices(region_tree, do, si):
     return ["전체"] + sorted(list(refined_gus))
 
 def render():
-    st.image("정비소배너.png", use_container_width=True)
+    st.image("images/정비소배너.png", use_container_width=True)
     st.markdown("---")
     st.header("🛠️ 정비소 조회")
     st.caption("현대(블루핸즈) · 기아(오토큐)") 

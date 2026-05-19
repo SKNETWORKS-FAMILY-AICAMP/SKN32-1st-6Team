@@ -147,7 +147,7 @@ proto_proj1/
 │   └── 
 ```
 ## 📊 Entity Relationship Diagram
-![image](./Diagram.png)
+![image](./images/Diagram.png)
 
 ## 💬 프로젝트 회고
 | 팀원 | 회고 |
