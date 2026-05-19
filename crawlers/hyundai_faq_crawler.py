@@ -58,8 +58,8 @@ def run(max_items=None):
 
         fm = FAQModel()
 
-        # 기존 데이터 삭제
-        fm.delete_all()
+        # # 기존 데이터 삭제
+        # fm.delete_all()
 
         # CSV 저장용 리스트
         faq_data = []
